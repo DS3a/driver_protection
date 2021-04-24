@@ -41,29 +41,19 @@ double get_distance() {
   return distance;
 }
 
-double get_dur() {
-  double duration;
-  digitalWrite(TRIG_PIN, LOW);  // Added this line
-  delayMicroseconds(2); // Added this line
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10); // Added this line
-  digitalWrite(TRIG_PIN, LOW);
-  duration = pulseIn(ECHO_PIN, HIGH);
-
-  return duration;
-}
-
 
 void loop() {
   for (int angle=0; angle<=180; angle++) {
     servo.write(angle);
     double distance = get_distance();
 //    double distance = get_dur();
-    Serial.print("{");
-    Serial.print(180-angle);
-    Serial.print(",");
-    Serial.print(distance);
-    Serial.println("}");
+    if (Serial.read()) {
+      Serial.print("{");
+      Serial.print(180-angle);
+      Serial.print(":");
+      Serial.print(distance);
+      Serial.println("}");
+    }
     delay(9);
     if (distance <= 0.5)  // This is where the LED On/Off happens
       digitalWrite(LED_PIN, HIGH); // When the Red condition is met, the Green LED should turn off
@@ -75,12 +65,14 @@ void loop() {
   for (int angle=180; angle>=0; angle--) {
     servo.write(angle);
     double distance = get_distance();
-//    double distance = get_dur();
-    Serial.print("{");
-    Serial.print(180-angle);
-    Serial.print(",");
-    Serial.print(distance);
-    Serial.println("}");
+//      double distance = get_dur();
+    if (Serial.read()) {
+      Serial.print("{");
+      Serial.print(180-angle);
+      Serial.print(":");
+      Serial.print(distance);
+      Serial.println("}");
+    }
     delay(9);
     if (distance <= 0.5)  // This is where the LED On/Off happens
       digitalWrite(LED_PIN, HIGH); // When the Red condition is met, the Green LED should turn off
